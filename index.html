@@ -3,160 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <title>AutoEdit Cyber Pro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Otimização mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        /* Reset CSS */
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilos Cyber */
+        body {
             background: #000;
             font-family: 'Orbitron', sans-serif;
             overflow: hidden;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%230ff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>'), auto; /* Cursor cyber */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%230ff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>'), auto;
         }
 
         /* Engrenagem 2.0 */
         .cyber-gear {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: 
                 radial-gradient(circle at 50% 50%, #0ff 10%, transparent 11%),
                 linear-gradient(45deg, transparent 45%, #0ff 46%, #0ff 54%, transparent 55%),
                 linear-gradient(-45deg, transparent 45%, #0ff 46%, #0ff 54%, transparent 55%);
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 30px;
+            right: 30px;
             cursor: pointer;
             animation: 
                 pulse 2s infinite,
                 rotate 4s linear infinite;
-            filter: drop-shadow(0 0 5px #0ff);
+            filter: drop-shadow(0 0 10px #0ff);
             z-index: 1000;
+            border-radius: 50%;
         }
 
-        /* Menu Atualizado */
+        /* Menu Cyber Pro */
         .cyber-menu {
             position: fixed;
-            bottom: 90px;
+            bottom: 120px;
             right: -300px;
-            width: 250px;
-            background: rgba(0, 32, 32, 0.95); /* Fundo mais profundo */
-            border: 1px solid #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-            transition: right 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Efeito elástico */
+            width: 280px;
+            background: rgba(0, 32, 32, 0.97);
+            border: 2px solid #0ff;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.4);
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .cyber-menu.active {
+            right: 30px;
         }
 
         .menu-item {
             padding: 15px;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            margin: 10px 0;
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid #0ff;
+            color: #0ff;
+            cursor: pointer;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
 
         .menu-item:hover {
-            background: rgba(0, 255, 255, 0.05);
+            background: rgba(0, 255, 255, 0.1);
             transform: translateX(-10px);
         }
 
-        .menu-item::before { /* Efeito de neon */
-            content: '';
-            position: absolute;
-            left: -100%;
+        /* Animações */
+        @keyframes pulse {
+            0% { opacity: 0.8; filter: drop-shadow(0 0 5px #0ff); }
+            50% { opacity: 1; filter: drop-shadow(0 0 20px #0ff); }
+            100% { opacity: 0.8; filter: drop-shadow(0 0 5px #0ff); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Cena 3D */
+        #threeScene {
+            position: fixed;
             top: 0;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, #0ff, transparent);
-            transition: 0.5s;
-        }
-
-        .menu-item:hover::before {
-            left: 100%;
-        }
-
-        /* Novas Animações */
-        @keyframes glitch {
-            0% { text-shadow: 3px 0 0 #0ff, -3px 0 0 #f0f; }
-            100% { text-shadow: -3px 0 0 #f0f, 3px 0 0 #0ff; }
-        }
-
-        .cyber-text {
-            animation: glitch 0.3s infinite alternate;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
+    <!-- Engrenagem -->
     <div class="cyber-gear" id="gearButton"></div>
-    
+
+    <!-- Menu -->
     <div id="cyberMenu" class="cyber-menu">
-        <div class="menu-item" onclick="toggleAI()">
-            <span class="cyber-text">🤖 MODO IA</span>
+        <div class="menu-item" onclick="toggleMode('ia')">
+            🤖 ATIVAR IA DE EDITS
         </div>
-        <div class="menu-item" onclick="postToTikTok()">
-            <span class="cyber-text">🚀 TIKTOK BLAST</span>
+        <div class="menu-item" onclick="toggleMode('tiktok')">
+            🚀 POSTAGEM AUTOMÁTICA
         </div>
     </div>
 
-    <script>
-        // Controle de Performance
-        let isMenuOpen = false;
+    <!-- Cena 3D -->
+    <div id="threeScene"></div>
 
-        // Menu com Fechar ao Clicar Fora
+    <script>
+        // ===== [ SISTEMA DE MENU ] ===== //
+        let menuAberto = false;
+
         document.getElementById('gearButton').addEventListener('click', (e) => {
             e.stopPropagation();
             const menu = document.getElementById('cyberMenu');
-            isMenuOpen = !isMenuOpen;
+            menuAberto = !menuAberto;
             menu.classList.toggle('active');
         });
 
         document.addEventListener('click', (e) => {
-            if(isMenuOpen && !e.target.closest('.cyber-menu') && !e.target.closest('.cyber-gear')) {
+            if(menuAberto && !e.target.closest('.cyber-menu') && !e.target.closest('.cyber-gear')) {
                 document.getElementById('cyberMenu').classList.remove('active');
-                isMenuOpen = false;
+                menuAberto = false;
             }
         });
 
-        // Sistema de Partículas Cyber
-        function initParticles() {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // ===== [ CENA 3D OTIMIZADA ] ===== //
+        let scene, camera, renderer, cube;
+
+        function init3D() {
+            // Configuração básica
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            // WebGL Renderer com fallback
+            try {
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            } catch (e) {
+                alert('Seu navegador não suporta WebGL! Atualize para a experiência completa.');
+                return;
+            }
+
             renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.prepend(renderer.domElement);
+            document.getElementById('threeScene').appendChild(renderer.domElement);
 
-            const particles = new THREE.BufferGeometry();
-            const particleCount = 1000;
-            const posArray = new Float32Array(particleCount * 3);
-
-            for(let i = 0; i < particleCount * 3; i++) {
-                posArray[i] = (Math.random() - 0.5) * 5;
-            }
-
-            particles.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            const material = new THREE.PointsMaterial({
-                size: 0.005,
-                color: '#0ff',
-                transparent: true
+            // Cubo Cyber
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x00ff00,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.7
             });
+            
+            cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+            camera.position.z = 5;
 
-            const particleMesh = new THREE.Points(particles, material);
-            scene.add(particleMesh);
-            camera.position.z = 2;
-
+            // Animação
             function animate() {
-                particleMesh.rotation.y += 0.001;
-                renderer.render(scene, camera);
                 requestAnimationFrame(animate);
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+                renderer.render(scene, camera);
             }
+
             animate();
+
+            // Resize Handler
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
         }
 
-        // Inicialização Segura
+        // ===== [ INICIALIZAÇÃO ] ===== //
         window.addEventListener('load', () => {
-            if(window.WebGLRenderingContext) initParticles();
-            else alert('SEU NAVEGADOR É PRÉ-HISTÓRICO! Atualize para a experiência cyber.');
+            // Verifica suporte a WebGL
+            if (typeof WebGLRenderingContext !== 'undefined') {
+                init3D();
+            } else {
+                document.body.innerHTML = '<h1 style="color:#0ff;text-align:center;margin-top:50vh">ATUALIZE SEU NAVEGADOR PARA ACESSAR!</h1>';
+            }
         });
+
+        // ===== [ FUNÇÕES ] ===== //
+        function toggleMode(modo) {
+            alert(`MODO ${modo.toUpperCase()} ATIVADO!`);
+            // Implemente aqui a lógica específica
+        }
     </script>
 
     <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
 </body>
 </html>
